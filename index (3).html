@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mato Slaninak · Futbalista</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00e676;
+    --green-dark: #00b248;
+    --black: #090d0a;
+    --dark: #111714;
+    --mid: #1a2118;
+    --card: #1e2820;
+    --text: #c8d8c2;
+    --muted: #607060;
+    --white: #f0f7f0;
+    --accent: #ffe600;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--green);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+  }
+  .cursor.big { width: 40px; height: 40px; background: rgba(0,230,118,0.15); border: 1px solid var(--green); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 6vw;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(0,178,72,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(0,230,118,0.06) 0%, transparent 50%);
+  }
+
+  /* Grass lines */
+  .grass-lines {
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 80px,
+      rgba(0,230,118,0.025) 80px,
+      rgba(0,230,118,0.025) 82px
+    );
+    pointer-events: none;
+  }
+
+  .hero-number {
+    position: absolute;
+    right: -2vw;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(160px, 28vw, 380px);
+    color: rgba(0,230,118,0.04);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.2s forwards;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 14vw, 200px);
+    line-height: 0.88;
+    color: var(--white);
+    letter-spacing: 0.01em;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.4s forwards;
+  }
+  h1 span { color: var(--green); }
+
+  .hero-sub {
+    margin-top: 28px;
+    font-size: clamp(15px, 2vw, 20px);
+    color: var(--muted);
+    max-width: 420px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.6s forwards;
+  }
+
+  .hero-pills {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-top: 36px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.8s forwards;
+  }
+  .pill {
+    padding: 8px 22px;
+    border: 1px solid rgba(0,230,118,0.3);
+    border-radius: 100px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green);
+    transition: background 0.2s, color 0.2s;
+  }
+  .pill:hover { background: var(--green); color: var(--black); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeUp 1s 1.2s forwards;
+  }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--green), transparent);
+    animation: scrollPulse 1.8s infinite;
+  }
+
+  /* ── STATS ── */
+  #stats {
+    padding: 80px 6vw;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2px;
+    background: rgba(0,230,118,0.05);
+    border-top: 1px solid rgba(0,230,118,0.1);
+    border-bottom: 1px solid rgba(0,230,118,0.1);
+  }
+
+  .stat-item {
+    padding: 40px 32px;
+    text-align: center;
+    border-right: 1px solid rgba(0,230,118,0.08);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 7vw, 90px);
+    color: var(--white);
+    line-height: 1;
+  }
+  .stat-num span { color: var(--green); }
+  .stat-label {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+  }
+
+  /* ── ABOUT ── */
+  #about {
+    padding: 120px 6vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    #about { grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 0.92;
+    color: var(--white);
+    margin-bottom: 28px;
+  }
+
+  .about-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .about-visual {
+    position: relative;
+    aspect-ratio: 3/4;
+    max-height: 480px;
+  }
+
+  .jersey-card {
+    width: 100%;
+    height: 100%;
+    background: var(--card);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0,230,118,0.12);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .jersey-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--green), var(--accent));
+  }
+
+  .jersey-svg { width: 70%; max-width: 200px; }
+
+  .jersey-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--white);
+    letter-spacing: 0.08em;
+    margin-top: 16px;
+  }
+
+  .jersey-num-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 120px;
+    color: rgba(0,230,118,0.08);
+    position: absolute;
+    bottom: -10px; right: 10px;
+    line-height: 1;
+  }
+
+  /* ── GAME ── */
+  #game {
+    padding: 100px 6vw;
+    background: var(--dark);
+    border-top: 1px solid rgba(0,230,118,0.08);
+  }
+
+  .game-header { text-align: center; margin-bottom: 50px; }
+  .game-header p {
+    color: var(--muted); font-size: 16px; margin-top: 12px;
+  }
+
+  .game-wrap {
+    max-width: 700px;
+    margin: 0 auto;
+    background: var(--mid);
+    border-radius: 20px;
+    border: 1px solid rgba(0,230,118,0.15);
+    padding: 30px;
+    position: relative;
+  }
+
+  .game-hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+  .hud-score {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .hud-score span { color: var(--green); }
+  .hud-timer {
+    font-size: 18px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .hud-timer.urgent { color: #ff4444; animation: blink 0.5s infinite; }
+
+  #gameCanvas {
+    width: 100%;
+    border-radius: 12px;
+    cursor: none;
+    display: block;
+  }
+
+  .game-controls {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 12px 32px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn:active { transform: scale(0.96); }
+
+  .btn-primary {
+    background: var(--green);
+    color: var(--black);
+  }
+  .btn-primary:hover { box-shadow: 0 0 24px rgba(0,230,118,0.4); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .btn-ghost:hover { border-color: var(--green); color: var(--green); }
+
+  .game-message {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(9,13,10,0.88);
+    border-radius: 12px;
+    z-index: 10;
+    gap: 12px;
+    backdrop-filter: blur(6px);
+  }
+  .game-message h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: var(--white);
+  }
+  .game-message p { color: var(--muted); font-size: 14px; letter-spacing: 0.1em; }
+  .game-message .final-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 96px;
+    color: var(--green);
+    line-height: 1;
+  }
+
+  .key-hint {
+    display: flex; gap: 6px; align-items: center;
+    font-size: 12px; color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.1em;
+  }
+  .key { 
+    background: var(--card); 
+    border: 1px solid rgba(0,230,118,0.2);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: var(--green);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 60px 6vw;
+    border-top: 1px solid rgba(0,230,118,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .footer-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--white);
+    letter-spacing: 0.05em;
+  }
+  .footer-name span { color: var(--green); }
+
+  .footer-copy {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.1); }
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="grass-lines"></div>
+  <div class="hero-number">10</div>
+
+  <p class="hero-tag">⚽ Spišská Nová Ves → Košice · Slovakia</p>
+  <h1>Mato<br><span>Slaninak</span></h1>
+  <p class="hero-sub">17-ročný futbalista zo srdca Spiša. Na ihrisku aj mimo neho — vždy naplno.</p>
+
+  <div class="hero-pills">
+    <span class="pill">⚽ Futbalista</span>
+    <span class="pill">📍 Košice</span>
+    <span class="pill">🎂 17 rokov</span>
+    <span class="pill">🏃 Krídelník</span>
+  </div>
+
+  <div class="scroll-hint">
+    <span>scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<section id="stats">
+  <div class="stat-item reveal">
+    <div class="stat-num"><span id="cnt1">0</span></div>
+    <div class="stat-label">Rokov na ihrisku</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num"><span id="cnt2">0</span><span style="color:var(--green)">+</span></div>
+    <div class="stat-label">Odohraných zápasov</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num"><span id="cnt3">0</span></div>
+    <div class="stat-label">Gólov</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num"><span id="cnt4">0</span><span style="color:var(--green)">+</span></div>
+    <div class="stat-label">Tréningov / rok</div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="reveal">
+    <p class="section-label">O mne</p>
+    <h2>Život na<br>ihrisku</h2>
+    <p class="about-text">Volám sa Mato Slaninak, mám 17 rokov a futbal je moja vášeň. Vyrastal som v Spišskej Novej Vsi, kde som aj začal kopať do lopty — a teraz hrám v Košiciach.</p>
+    <p class="about-text">Hrám ako krídelník — rýchlosť, dribling a centrovačky sú moja parketa. Deväť rokov na ihrisku mi dalo skúsenosti, ktoré sa nedajú naučiť z knihy — len odohranými zápasmi.</p>
+    <p class="about-text">Viac ako 365 tréningov ročne hovorí za všetko. Futbal nie je len koníček — je to životný štýl.</p>
+  </div>
+
+  <div class="about-visual reveal">
+    <div class="jersey-card">
+      <!-- Jersey SVG -->
+      <svg class="jersey-svg" viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Collar -->
+        <path d="M75 10 Q100 30 125 10" stroke="#00e676" stroke-width="3" fill="none"/>
+        <!-- Body -->
+        <path d="M75 10 L30 55 L45 65 L45 210 L155 210 L155 65 L170 55 L125 10 Q100 30 75 10Z"
+              fill="#1e2820" stroke="rgba(0,230,118,0.3)" stroke-width="1.5"/>
+        <!-- Sleeves -->
+        <path d="M75 10 L30 55 L10 80 L30 90 L45 65" fill="#162018" stroke="rgba(0,230,118,0.2)" stroke-width="1"/>
+        <path d="M125 10 L170 55 L190 80 L170 90 L155 65" fill="#162018" stroke="rgba(0,230,118,0.2)" stroke-width="1"/>
+        <!-- Chest stripe -->
+        <rect x="45" y="60" width="110" height="5" fill="rgba(0,230,118,0.18)" rx="2"/>
+        <!-- Number -->
+        <text x="100" y="155" text-anchor="middle" font-family="'Bebas Neue', sans-serif" font-size="68" fill="#00e676" opacity="0.9">10</text>
+        <!-- Logo dot -->
+        <circle cx="72" cy="85" r="10" fill="rgba(0,230,118,0.12)" stroke="rgba(0,230,118,0.3)" stroke-width="1"/>
+        <text x="72" y="90" text-anchor="middle" font-size="10" fill="#00e676">⚽</text>
+      </svg>
+      <div class="jersey-name">SLANINAK</div>
+      <div class="jersey-num-big">10</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MINI GAME ── -->
+<section id="game">
+  <div class="game-header reveal">
+    <p class="section-label">Mini hra</p>
+    <h2>Penalty<br>Challenge</h2>
+    <p>Žltý krúžok sa chveje — klikni keď mieruješ správne. Brankár sa pohybuje čoraz rýchlejšie. Pri 5 góloch príde druhý!</p>
+  </div>
+
+  <div class="game-wrap reveal">
+    <div class="game-hud">
+      <div class="hud-score">Góly: <span id="scoreDisplay">0</span></div>
+      <div class="key-hint">
+        <span class="key">Mouse</span> mieri ·
+        <span class="key">Click</span> kopni
+      </div>
+      <div class="hud-timer" id="timerDisplay">30s</div>
+    </div>
+
+    <canvas id="gameCanvas" width="640" height="340"></canvas>
+
+    <div id="gameMessage" class="game-message">
+      <h3>⚽ Penalty Challenge</h3>
+      <p style="color:var(--text);font-size:15px">Žltý krúžok sa pohybuje — klikni v správnom momente!</p>
+      <p>Pri 5 góloch príde druhý brankár. Máš 25 sekúnd!</p>
+      <br>
+      <button class="btn btn-primary" onclick="startGame()">HRAŤ</button>
+    </div>
+  </div>
+
+  <div class="game-controls">
+    <button class="btn btn-primary" onclick="startGame()">🔄 Nová hra</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('game').scrollIntoView({behavior:'smooth'})">📊 Highscore</button>
+  </div>
+  <p style="text-align:center;margin-top:14px;color:var(--muted);font-size:13px;letter-spacing:0.05em">
+    Highscore: <span id="highScore" style="color:var(--green);font-family:'Bebas Neue',sans-serif;font-size:20px">0</span>
+  </p>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-name">Mato <span>Slaninak</span></div>
+  <div class="footer-copy">© 2025 · Košice · ⚽</div>
+</footer>
+
+<script>
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('button, a, .pill').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+});
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── COUNTERS ──
+function animateCount(id, target, duration = 1800) {
+  const el = document.getElementById(id);
+  const obs = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    obs.disconnect();
+    let start = null;
+    const step = ts => {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / duration, 1);
+      el.textContent = Math.floor(p * target);
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+  obs.observe(el);
+}
+animateCount('cnt1', 9);
+animateCount('cnt2', 100);
+animateCount('cnt3', 23);
+animateCount('cnt4', 365);
+
+// ──────────────────────────────────
+// ── PENALTY MINI GAME (HARD MODE) ──
+// ──────────────────────────────────
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+let score = 0, highScore = 0, timeLeft = 25;
+let gameActive = false, animFrame = null;
+let mx = W/2, my = H/2;
+let lastTime = 0;
+let ball = null, shooting = false;
+// Main GK
+let goalkeeper = { x: W/2, y: 60, w: 72, h: 24, dir: 1, speed: 5.5, wobble: 0 };
+// Second GK appears after score >= 5
+let gk2 = { x: W/3, y: 60, w: 60, h: 20, dir: -1, speed: 4.2, wobble: Math.PI };
+let particles = [];
+// Wobbling power bar
+let power = 0, powerDir = 1, powerSpeed = 2.2;
+// Aim wobble
+let aimWobble = 0, aimWobbleSpeed = 0.07;
+let missAnim = null;
+let goalAnim = 0;
+let readyForShot = true;
+let combo = 0; // consecutive goals
+let shotsFired = 0;
+// GK dive: when ball is shot, GK dives toward ball
+let gkDiving = false, gkDiveTarget = 0;
+
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  mx = (e.clientX - r.left) * (W / r.width);
+  my = (e.clientY - r.top) * (H / r.height);
+});
+
+canvas.addEventListener('click', () => {
+  if (gameActive && readyForShot && !shooting) shoot();
+});
+
+function startGame() {
+  score = 0; timeLeft = 25; gameActive = true;
+  shooting = false; readyForShot = true; ball = null;
+  particles = []; goalAnim = 0; combo = 0; shotsFired = 0;
+  power = 0; powerDir = 1;
+  goalkeeper.x = W/2; goalkeeper.speed = 5.5;
+  gk2.x = W/3;
+  document.getElementById('scoreDisplay').textContent = 0;
+  document.getElementById('timerDisplay').textContent = '25s';
+  document.getElementById('timerDisplay').classList.remove('urgent');
+  document.getElementById('gameMessage').style.display = 'none';
+  lastTime = performance.now();
+  if (animFrame) cancelAnimationFrame(animFrame);
+  animFrame = requestAnimationFrame(gameLoop);
+}
+
+let timerAcc = 0;
+function gameLoop(ts) {
+  const dt = ts - lastTime; lastTime = ts;
+  timerAcc += dt;
+  if (timerAcc >= 1000) {
+    timerAcc -= 1000;
+    timeLeft--;
+    document.getElementById('timerDisplay').textContent = timeLeft + 's';
+    if (timeLeft <= 8) document.getElementById('timerDisplay').classList.add('urgent');
+    if (timeLeft <= 0) { endGame(); return; }
+  }
+  update(dt);
+  draw();
+  animFrame = requestAnimationFrame(gameLoop);
+}
+
+function update(dt) {
+  const elapsed = 25 - timeLeft;
+
+  // Power bar wobble — speeds up over time
+  powerSpeed = 2.2 + elapsed * 0.12;
+  power += powerDir * powerSpeed;
+  if (power >= 100) { power = 100; powerDir = -1; }
+  if (power <= 0)   { power = 0;   powerDir =  1; }
+
+  // Aim wobble increases with elapsed time
+  aimWobble += aimWobbleSpeed + elapsed * 0.003;
+
+  // GK movement — accelerates over time
+  goalkeeper.speed = 5.5 + elapsed * 0.22;
+  goalkeeper.wobble += 0.08;
+
+  if (!gkDiving) {
+    goalkeeper.x += goalkeeper.dir * goalkeeper.speed;
+    if (goalkeeper.x > W - 100) goalkeeper.dir = -1;
+    if (goalkeeper.x < 100)     goalkeeper.dir =  1;
+  } else {
+    // Dive toward ball landing zone
+    const dx = gkDiveTarget - goalkeeper.x;
+    goalkeeper.x += dx * 0.18;
+  }
+
+  // Second GK — appears at score >= 5
+  if (score >= 5) {
+    gk2.speed = 3.8 + elapsed * 0.15;
+    gk2.wobble += 0.06;
+    gk2.x += gk2.dir * gk2.speed;
+    if (gk2.x > W - 130) gk2.dir = -1;
+    if (gk2.x < 130)     gk2.dir =  1;
+  }
+
+  // Ball flight
+  if (ball) {
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+    ball.r *= 0.983;
+    ball.spin += 0.18;
+
+    if (ball.y < 85) {
+      const gx = W/2 - 130, gw = 260;
+      const inGoal = ball.x > gx && ball.x < gx + gw;
+      const blockedByGK1 = Math.abs(ball.x - goalkeeper.x) < (goalkeeper.w/2 + 16) &&
+                           Math.abs(ball.y - goalkeeper.y) < 32;
+      const blockedByGK2 = score >= 5 &&
+                           Math.abs(ball.x - gk2.x) < (gk2.w/2 + 14) &&
+                           Math.abs(ball.y - gk2.y) < 28;
+
+      if (blockedByGK1 || blockedByGK2) {
+        spawnParticles(ball.x, ball.y, '#ff6b6b', 14);
+        const gkName = blockedByGK1 ? 'CHYTENÉ!' : 'ZABLOKOVANÉ!';
+        missAnim = { x: ball.x, y: ball.y, t: 0, msg: gkName };
+        combo = 0;
+        resetShot();
+      } else if (inGoal) {
+        score++;
+        combo++;
+        document.getElementById('scoreDisplay').textContent = score;
+        spawnParticles(ball.x, ball.y, '#00e676', combo >= 3 ? 35 : 22);
+        goalAnim = 60;
+        const comboMsg = combo >= 3 ? `${combo}x COMBO! 🔥` : 'GÓÓÓL! ⚽';
+        missAnim = { x: W/2, y: H/2 - 30, t: 0, msg: comboMsg };
+        resetShot();
+      } else {
+        spawnParticles(ball.x, ball.y, '#aaa', 8);
+        missAnim = { x: ball.x, y: ball.y, t: 0, msg: 'Vedľa!' };
+        combo = 0;
+        resetShot();
+      }
+      gkDiving = false;
+    }
+  }
+
+  particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.18; p.life -= 0.03; });
+  particles = particles.filter(p => p.life > 0);
+  if (goalAnim > 0) goalAnim--;
+  if (missAnim) { missAnim.t++; if (missAnim.t > 55) missAnim = null; }
+}
+
+function resetShot() {
+  shooting = false; ball = null; readyForShot = false;
+  // Cooldown gets longer if you're scoring a lot (less time to spam)
+  const delay = score >= 8 ? 1100 : 800;
+  setTimeout(() => { readyForShot = true; }, delay);
+}
+
+function shoot() {
+  if (!readyForShot || shooting) return;
+  shooting = true;
+  shotsFired++;
+
+  // Aim wobble offsets the shot — stronger at higher scores
+  const wobbleAmt = 18 + score * 3.5;
+  const aimOffsetX = Math.sin(aimWobble) * wobbleAmt;
+  const aimOffsetY = Math.cos(aimWobble * 1.3) * (wobbleAmt * 0.5);
+
+  // Power affects ball speed (too low or too high = weaker)
+  const powerFactor = 0.6 + (Math.sin((power / 100) * Math.PI)) * 0.7;
+
+  const startX = mx, startY = H - 80;
+  const targetX = mx + aimOffsetX;
+  const targetY = 50 + aimOffsetY;
+  const dist = Math.hypot(targetX - startX, targetY - startY);
+  const speed = 14 + powerFactor * 8;
+  ball = {
+    x: startX, y: startY,
+    vx: (targetX - startX) / dist * speed * 0.55,
+    vy: (targetY - startY) / dist * speed,
+    r: 16, spin: 0
+  };
+
+  // GK dives toward predicted ball landing
+  gkDiving = true;
+  gkDiveTarget = targetX + (Math.random() - 0.5) * 30;
+}
+
+function spawnParticles(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const s = 2 + Math.random() * 6;
+    particles.push({ x, y, vx: Math.cos(a)*s, vy: Math.sin(a)*s - 2, life: 1, color });
+  }
+}
+
+function drawGK(gkx, gky, w, h, color, label) {
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.roundRect(gkx - w/2, gky - h/2, w, h, 8);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = '#f4a261';
+  ctx.beginPath(); ctx.arc(gkx, gky - h/2 - 12, 12, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 11px Barlow Condensed, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(label, gkx, gky + 5);
+  ctx.restore();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Pitch background
+  const pitchGrad = ctx.createLinearGradient(0, 0, 0, H);
+  pitchGrad.addColorStop(0, '#0e1e12');
+  pitchGrad.addColorStop(1, '#0a150d');
+  ctx.fillStyle = pitchGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  for (let i = 0; i < 10; i++) {
+    ctx.fillStyle = i % 2 === 0 ? 'rgba(0,230,118,0.025)' : 'transparent';
+    ctx.fillRect(i * (W/10), 0, W/10, H);
+  }
+
+  // Goal — slightly narrower for hard mode
+  const gx = W/2 - 130, gy = 30, gw = 260, gh = 65;
+  ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(gx, gy, gw, gh);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  for (let x = gx + 20; x < gx + gw; x += 20) {
+    ctx.beginPath(); ctx.moveTo(x, gy); ctx.lineTo(x, gy + gh); ctx.stroke();
+  }
+  for (let y = gy + 15; y < gy + gh; y += 15) {
+    ctx.beginPath(); ctx.moveTo(gx, y); ctx.lineTo(gx + gw, y); ctx.stroke();
+  }
+
+  if (goalAnim > 0) {
+    ctx.fillStyle = `rgba(0,230,118,${goalAnim/60 * 0.3})`;
+    ctx.fillRect(gx+2, gy+2, gw-4, gh-4);
+  }
+
+  // Penalty area
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(W/2 - 170, 0, 340, 120);
+  ctx.strokeRect(W/2 - 80, 0, 160, 48);
+  ctx.beginPath(); ctx.arc(W/2, H - 80, 55, 0, Math.PI*2); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.beginPath(); ctx.arc(W/2, H - 80, 4, 0, Math.PI*2); ctx.fill();
+
+  // Second GK (appears at score 5+)
+  if (score >= 5) {
+    const bounce2 = Math.sin(gk2.wobble) * 4;
+    drawGK(gk2.x, gk2.y + bounce2, gk2.w, gk2.h, '#9c27b0', 'GK2');
+  }
+
+  // Main GK
+  const bounce = Math.sin(goalkeeper.wobble) * 5;
+  drawGK(goalkeeper.x, goalkeeper.y + bounce, goalkeeper.w, goalkeeper.h, '#ff6b35', 'GK');
+
+  // ── POWER BAR ──
+  if (readyForShot && !shooting) {
+    const bx = 20, by = H - 30, bw = 120, bh = 10;
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 5); ctx.fill();
+    const pColor = power > 75 ? '#ff4444' : power > 45 ? '#ffe600' : '#00e676';
+    ctx.fillStyle = pColor;
+    ctx.beginPath(); ctx.roundRect(bx, by, bw * power/100, bh, 5); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '10px Barlow Condensed, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('SILA', bx, by - 4);
+    // Sweet spot indicator
+    ctx.strokeStyle = '#00e676';
+    ctx.lineWidth = 2;
+    const sweet = bx + bw * 0.55;
+    ctx.beginPath(); ctx.moveTo(sweet, by - 2); ctx.lineTo(sweet, by + bh + 2); ctx.stroke();
+  }
+
+  // Aim cursor with wobble
+  if (readyForShot && !shooting) {
+    const wobbleAmt = 18 + score * 3.5;
+    const ox = Math.sin(aimWobble) * wobbleAmt;
+    const oy = Math.cos(aimWobble * 1.3) * (wobbleAmt * 0.5);
+    const aimX = mx + ox, aimY = my + oy;
+
+    // Dashed line to aim point
+    ctx.strokeStyle = 'rgba(0,230,118,0.35)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 5]);
+    ctx.beginPath(); ctx.moveTo(mx, H - 80); ctx.lineTo(aimX, aimY); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Aim dot (wobbles away from cursor)
+    ctx.fillStyle = 'rgba(255,200,0,0.85)';
+    ctx.beginPath(); ctx.arc(aimX, aimY, 7, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,200,0,0.4)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(aimX, aimY, 13, 0, Math.PI*2); ctx.stroke();
+
+    // Real cursor (green)
+    ctx.fillStyle = 'rgba(0,230,118,0.6)';
+    ctx.beginPath(); ctx.arc(mx, my, 5, 0, Math.PI*2); ctx.fill();
+  }
+
+  // Ball
+  if (ball) {
+    ctx.save();
+    ctx.translate(ball.x, ball.y);
+    ctx.rotate(ball.spin);
+    const ballGrad = ctx.createRadialGradient(-4, -4, 2, 0, 0, ball.r);
+    ballGrad.addColorStop(0, '#fff');
+    ballGrad.addColorStop(1, '#aaa');
+    ctx.fillStyle = ballGrad;
+    ctx.beginPath(); ctx.arc(0, 0, ball.r, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#222';
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.arc(Math.cos(a)*ball.r*0.5, Math.sin(a)*ball.r*0.5, ball.r*0.22, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // Player
+  const px = mx, py = H - 80;
+  ctx.fillStyle = '#1a6e35';
+  ctx.beginPath(); ctx.ellipse(px, py + 12, 22, 10, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#2a8e45';
+  ctx.beginPath(); ctx.ellipse(px, py - 5, 14, 28, 0, 0, Math.PI); ctx.fill();
+
+  // Particles
+  particles.forEach(p => {
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+
+  // Combo indicator
+  if (combo >= 2 && readyForShot) {
+    ctx.fillStyle = '#ffe600';
+    ctx.font = `bold ${16 + combo * 2}px Bebas Neue, sans-serif`;
+    ctx.textAlign = 'right';
+    ctx.fillText(`🔥 COMBO x${combo}`, W - 20, H - 16);
+  }
+
+  // Miss/Goal message
+  if (missAnim) {
+    const alpha = missAnim.t < 20 ? missAnim.t/20 : 1 - (missAnim.t-20)/35;
+    ctx.globalAlpha = Math.max(0, alpha);
+    const isGoal = missAnim.msg.includes('GÓ') || missAnim.msg.includes('COMBO');
+    ctx.font = `bold ${isGoal ? '40px' : '28px'} Bebas Neue, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = isGoal ? '#00e676' : missAnim.msg.includes('CHY') || missAnim.msg.includes('ZAB') ? '#ff6b6b' : '#fff';
+    ctx.fillText(missAnim.msg, missAnim.x, missAnim.y);
+    ctx.globalAlpha = 1;
+  }
+
+  // Hint
+  if (!shooting && readyForShot) {
+    ctx.fillStyle = 'rgba(0,230,118,0.5)';
+    ctx.font = '12px Barlow Condensed, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('KLIKNI — žltý krúžok = skutočný smer streľby!', W/2, H - 16);
+  }
+
+  // Hard mode warning when 2nd GK appears
+  if (score === 4 && readyForShot) {
+    ctx.fillStyle = 'rgba(255,100,0,0.85)';
+    ctx.font = 'bold 22px Bebas Neue, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('⚠ DRUHÝ BRANKÁR PRICHÁDZA!', W/2, H/2);
+  }
+}
+
+function endGame() {
+  gameActive = false;
+  if (animFrame) cancelAnimationFrame(animFrame);
+  if (score > highScore) {
+    highScore = score;
+    document.getElementById('highScore').textContent = highScore;
+  }
+  const acc = shotsFired > 0 ? Math.round((score / shotsFired) * 100) : 0;
+  const msg = document.getElementById('gameMessage');
+  msg.style.display = 'flex';
+  msg.innerHTML = `
+    <h3>${score >= 12 ? '🏆 Majster penalty!' : score >= 7 ? '⚽ Solídne!' : score >= 3 ? '😤 Dá sa lepšie!' : '😅 Skús znova!'}</h3>
+    <div class="final-score">${score}</div>
+    <p style="color:var(--muted);letter-spacing:0.1em">GÓLOV ZA 25 SEKÚND</p>
+    <p style="color:var(--muted);font-size:13px;margin-top:6px">Presnosť: <span style="color:var(--green)">${acc}%</span> &nbsp;|&nbsp; Rekord: <span style="color:var(--green)">${highScore}</span></p>
+    <br>
+    <button class="btn btn-primary" onclick="startGame()">HRAŤ ZNOVA</button>
+  `;
+}
+
+// Initial draw
+draw();
+
+// ── PARTICLE CLICK FX ──
+document.querySelectorAll('.btn-primary').forEach(b => {
+  b.addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    spawnParticles(e.clientX - rect.left, e.clientY - rect.top, '#00e676', 8);
+  });
+});
+</script>
+</body>
+</html>
